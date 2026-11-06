@@ -22,7 +22,10 @@ public static class MauiProgram
         {
 #if ANDROID
             var s = handler.PlatformView.Settings;
+            var downloadBridge = new BlobDownloadBridge();
             handler.PlatformView.SetWebChromeClient(new MultiFileWebChromeClient());
+            handler.PlatformView.AddJavascriptInterface(downloadBridge, "HtmlHubDownload");
+            handler.PlatformView.SetWebViewClient(new BlobDownloadWebViewClient(downloadBridge));
             s.JavaScriptEnabled = true;
             s.DomStorageEnabled = true;
             s.DatabaseEnabled = true;
