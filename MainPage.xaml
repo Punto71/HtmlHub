@@ -3,8 +3,7 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              Shell.NavBarIsVisible="False"
-            SafeAreaEdges="None"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#333333}">
+			 SafeAreaEdges="None">
     <Grid>
         <WebView x:Name="Web" IsVisible="False" />
 

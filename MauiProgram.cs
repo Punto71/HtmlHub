@@ -1,4 +1,7 @@
 using Microsoft.Extensions.Logging;
+#if ANDROID
+using HtmlHub.Platforms.Android;
+#endif
 
 namespace HtmlHub;
 
@@ -19,6 +22,7 @@ public static class MauiProgram
         {
 #if ANDROID
             var s = handler.PlatformView.Settings;
+            handler.PlatformView.SetWebChromeClient(new MultiFileWebChromeClient());
             s.JavaScriptEnabled = true;
             s.DomStorageEnabled = true;
             s.DatabaseEnabled = true;
