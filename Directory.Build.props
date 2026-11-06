@@ -1,0 +1,43 @@
+<Project>
+
+  <PropertyGroup>
+    <NuGetPackagesFolder Condition="'$(NuGetPackagesFolder)'==''">$(MSBuildThisFileDirectory).nuget_packages</NuGetPackagesFolder>
+  </PropertyGroup>
+  
+    <PropertyGroup>
+      <GitVersionScriptPath>$(MSBuildThisFileDirectory)GitVersion.ps1</GitVersionScriptPath>
+      <PowerShellProcessName Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">powershell</PowerShellProcessName>
+      <PowerShellProcessName Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">pwsh</PowerShellProcessName>
+      <CalculateVersionDependsOn>$(CalculateVersionDependsOn)</CalculateVersionDependsOn>
+    </PropertyGroup>
+
+  <Target Name="CalculateGitVersion" BeforeTargets="BeforeBuild">
+    <Exec Command="$(PowerShellProcessName) -ExecutionPolicy Bypass -File &quot;$(GitVersionScriptPath)&quot;" 
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="Low"
+          IgnoreExitCode="false">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitVersionOutput" />
+    </Exec>
+    
+    <PropertyGroup>
+      <GitVersion>$(GitVersionOutput.Split('|')[0].Trim())</GitVersion>
+      <Version>$(GitVersionOutput.Split('|')[2].Trim())</Version>
+      <NuGetVersion>$(GitVersionOutput.Split('|')[1].Trim())</NuGetVersion>
+      <ProductVersion>$(GitVersionOutput.Split('|')[3].Trim())</ProductVersion>
+      <AssemblyVersion>$(Version)</AssemblyVersion>
+      <PackageVersion>$(NuGetVersion)</PackageVersion>
+      <FileVersion>$(Version)</FileVersion>
+      <InformationalVersion>$(ProductVersion)</InformationalVersion>
+      <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
+    
+    <Message Importance="high" Text="Calculated version: $(GitVersion)" />
+    <Message Importance="high" Text="NuGet Package Version: $(PackageVersion)" />
+    <Message Importance="high" Text="Assembly version: $(AssemblyVersion)" />
+    <Message Importance="high" Text="Product version: $(ProductVersion)" />
+  </Target>
+
+  <Target Name="BeforeBuild" DependsOnTargets="CalculateGitVersion">
+    <!-- Версия будет установлена автоматически через свойства -->
+  </Target>
+</Project>
